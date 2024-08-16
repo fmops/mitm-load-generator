@@ -1,5 +1,6 @@
 <script>
-	import Counter from './Counter.svelte';
+	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 	import welcome from '$lib/images/svelte-welcome.webp';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 </script>
@@ -17,15 +18,24 @@
 				<img src={welcome_fallback} alt="Welcome" />
 			</picture>
 		</span>
-
-		to your new<br />SvelteKit app
 	</h1>
 
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
+  <code>
+    {JSON.stringify($page.form)}
+  </code>
 
-	<Counter />
+  <form method="POST" action="?/a">
+    <button>External action A</button>
+  </form>
+
+  <form method="POST" action="?/b">
+    <button>External action B</button>
+  </form>
+
+  <form method="POST" action="?/c">
+    <button>External action C</button>
+  </form>
+
 </section>
 
 <style>
