@@ -1,5 +1,5 @@
 // place files you want to import through the `$lib` alias in this folder.
-import { AutoTokenizer, pipeline } from '@xenova/transformers';
+import { AutoTokenizer } from '@xenova/transformers';
 
 const systemContent =
     'Below is a dialogue between a human user and an very helpful AI assistant named CuteChat.\n';
@@ -69,18 +69,8 @@ export async function chatTempalte(userMessage) {
  * @return {Promise<string>} The generated response from the AI assistant
  */
 export async function chatGenerate(userMessage) {
-    const textGenerationPipeline = await pipeline(
-        'text-generation',
-        'shi-zheng-qxhs/gpt2_oasst2_curated_onnx'
-    );
-
-    const output = await textGenerationPipeline(userMessage, {
-        max_new_tokens: 128,
-        penalty_alpha: 0.6,
-        top_k: 6,
-        eos_token_id: 50256,
-        pad_token_id: 50256,
-    });
-
-    return output;
+    return (await (await fetch('/api/chatGenerate', {
+      method: 'POST',
+      body: JSON.stringify({ userMessage }),
+    })).json()).response;
 }

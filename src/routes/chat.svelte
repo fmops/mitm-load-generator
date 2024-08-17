@@ -36,6 +36,18 @@
                 request={{
                     handler: async (body, signals) => {
                         try {
+        console.log("HI MOM")
+          console.log(await (await fetch("https://dreamcatcher.blueteam.ai/api/v1/stub/openai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer 123",
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-turbo",
+              messages: body.messages[0].text,
+            })
+          })).json());
                             // Generating chat response
                             const text = await chatGenerate(body.messages[0].text);
                             signals.onResponse({ text: text[0].generated_text });
