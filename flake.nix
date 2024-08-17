@@ -18,7 +18,8 @@
             nodePackages.prettier # formatter
             nodePackages.eslint # linter
             nodePackages.typescript-language-server
-            bun
+
+            python312
           ]);
         };
       }

@@ -1,69 +1,10 @@
 <script>
-	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+    import Deepchat from './chat.svelte';
+    import Nav from '$lib/nav.svelte';
+
+    const name = 'PDF RAG Demo';
+    const url = '/rag';
 </script>
 
-<svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
-</svelte:head>
-
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
-	</h1>
-
-  <code>
-    {JSON.stringify($page.form)}
-  </code>
-
-  <form method="POST" action="?/a">
-    <button>External action A</button>
-  </form>
-
-  <form method="POST" action="?/b">
-    <button>External action B</button>
-  </form>
-
-  <form method="POST" action="?/c">
-    <button>External action C</button>
-  </form>
-
-</section>
-
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
-
-	h1 {
-		width: 100%;
-	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
-	}
-</style>
+<Nav {name} {url} />
+<Deepchat />
