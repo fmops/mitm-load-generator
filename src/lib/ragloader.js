@@ -72,6 +72,34 @@ async function loadDocs(loader, args) {
     }
 }
 
+import { Embeddings } from "@langchain/core/embeddings";
+
+export class RemoteEmbeddings extends Embeddings {
+  constructor(fields) {
+    super(fields);
+  }
+
+  async embedDocuments(texts) {
+    return await (await fetch("/api/embedDocuments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ texts }),
+    })).json();
+  }
+
+  async embedQuery(text) {
+    return await (await fetch("/api/embedQuery", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
+    })).json();
+  }
+}
+
 /**
  * Create a vector store from the given documents using the specified arguments.
  *
@@ -87,13 +115,15 @@ async function createVectorStore(docs, args) {
         }
 
         // Create a new HuggingFaceTransformersEmbeddings model with the specified modelName or use the default embeddingModel
-        const model = new HuggingFaceTransformersEmbeddings({
-            modelName: args?.modelName || embeddingModel, // modelName from args or default embeddingModel
-        });
+        // const model = new HuggingFaceTransformersEmbeddings({
+        //     modelName: args?.modelName || embeddingModel, // modelName from args or default embeddingModel
+        // });
+        const model = new RemoteEmbeddings({});
 
         // Return the vector store created from the documents using the model
         return await CloseVectorWeb.fromDocuments(docs, model);
     } catch (error) {
+      console.log(error);
         // If an error occurs, create a new error for creating vector store and include the original error
         return new Error('creating vector store: ', error);
     }
