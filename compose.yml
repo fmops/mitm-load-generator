@@ -1,0 +1,49 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    # container_name: gluetun
+    # line above must be uncommented to allow external containers to connect.
+    # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun
+    privileged: true
+    cap_add:
+      - all
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+      - 5173:5173 # demo app
+    volumes:
+      - ./wg/mitmproxy.conf:/gluetun/wireguard/wg0.conf
+      - /home/feynman/.mitmproxy/mitmproxy-ca-cert.pem:/usr/local/share/ca-certificates/mitmproxy-ca-cert.crt
+      - /lib/modules:/lib/modules:ro
+    environment:
+      - LOG_LEVEL=debug
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
+      - VPN_SERVICE_PROVIDER=custom
+      - VPN_TYPE=wireguard
+      # Wireguard:
+      - WIREGUARD_PRIVATE_KEY=0o6dn506+J3kvphitDcBHLikZ2JzXFf8wCouoWc6zyI=
+      - WIREGUARD_ADDRESSES=10.0.0.1/32
+      - WIREGUARD_ENDPOINT_IP=192.168.1.160
+      - WIREGUARD_ENDPOINT_PORT=51820
+      - WIREGUARD_PUBLIC_KEY=pdD/m2zZBYTPrirrR1BPtzknmCd0eXNfIQJYlS1+pEc=
+      - TZ=US/Pacific
+    entrypoint: /bin/sh -c "update-ca-certificates && /gluetun-entrypoint"
+  app:
+    image: node:22.6
+    environment:
+      - NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/mitmproxy-ca-cert.crt
+    volumes:
+      - ./:/app:z
+      - /home/feynman/.mitmproxy/mitmproxy-ca-cert.pem:/usr/local/share/ca-certificates/mitmproxy-ca-cert.crt:z
+    restart: unless-stopped
+    network_mode: container:demo-app_gluetun_1
+    entrypoint: /bin/sh -c "update-ca-certificates && cd /app && ./node_modules/.bin/vite dev --host 0.0.0.0"
+  
+networks:
+  net01:
+    driver: bridge
