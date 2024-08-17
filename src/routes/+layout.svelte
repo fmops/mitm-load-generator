@@ -11,7 +11,7 @@
 	</main>
 
 	<footer>
-		<p>Maintained by <a href="https://blueteam.ai">bluetedam.ai</a> </p>
+		<p>Maintained by <a href="https://blueteam.ai">blueteam.ai</a> </p>
 	</footer>
 </div>
 
